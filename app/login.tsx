@@ -1,6 +1,7 @@
 import { View, Text, TextInput, Button, StyleSheet,Image, TouchableOpacity, ImageBackground } from "react-native";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useRouter } from "expo-router";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
@@ -8,19 +9,34 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
 
   const router = useRouter();
-  const handleLogin = () => {
-    // Simuler une connexion réussie 
-    if (username && password) {
-      router.push("/home"); // Redirection vers Home après connexion
-    } else {
-      alert("Veuillez remplir tous les champs.");
-    }
+  
+  const validateEmail = (email: string) => {
+    return /\S+@\S+\.\S+/.test(email);
   };
+  
+  const handleLogin = () => {
+    if (!username || !password || !email) {
+      alert("Veuillez remplir tous les champs.");
+      return;
+    }
+    if (!validateEmail(email)) {
+      alert("Veuillez entrer une adresse email valide.");
+      return;
+    }
+    router.push("/home");
+  };
+  
+
   return (
     <View style={styles.background}>
      <View style={styles.container}>
     <Image source={require("../assets/images/logo.png")} style={styles.logo} />
+
+    <View style={styles.content}>
+      <Icon name="login" size={20} color="#fff" />
       <Text style={styles.title}>Connexion</Text>
+    </View>
+      
       <TextInput
         style={styles.input}
         placeholder="Nom d'utilisateur"
@@ -32,6 +48,7 @@ export default function LoginScreen() {
         placeholder="Email"
         value={email} 
         onChangeText={setEmail}
+        keyboardType="email-address"
         
       />
       <TextInput
@@ -60,12 +77,18 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
       },
+
   container: {
     width: "90%",
     backgroundColor: "rgba(255, 255, 255, 0.9)", 
     padding: 20,
     borderRadius: 10,
     alignItems: "center",
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center', 
+    padding: 10,
   },
   logo: {
     width: 120,
@@ -76,6 +99,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    marginLeft: 8,
   },
   input: {
     width: "100%",
